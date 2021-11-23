@@ -17,6 +17,19 @@ import javax.persistence.Query;
  */
 public class Crud {
     
+      public static void insertaProducto(Productos producto) {
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory("unidad");
+        EntityManager manager = factory.createEntityManager();
+         manager.getTransaction().begin();
+       /* Productos producto = new Productos();
+        producto.setNombre("Espinacas");
+        producto.setPrecio(10);
+        producto.setImagen("espinacas.jpg");
+        producto.setCategoria("complementos"); */
+        manager.merge(producto);
+        manager.getTransaction().commit();
+        }
+    
      public static int actualizaProducto(Productos miProducto) {
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("unidad");
         EntityManager manager = factory.createEntityManager();

@@ -18,6 +18,7 @@
         <div class="container">
             
         <h1>Listado de productos</h1>
+        <a class="btn btn-primary" href="Servlet?op=insertar">Nuevo Producto</a>
         <%
             List<Productos> listaProductos = ( List<Productos> )request.getAttribute("listado");
             String mensaje = ( String ) request.getAttribute("mensaje");
