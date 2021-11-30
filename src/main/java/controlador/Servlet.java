@@ -20,7 +20,10 @@ import modelo.Productos;
  * @author DAW2
  */
 public class Servlet extends HttpServlet {
-
+final int NUM_LINEAS_PAGINA = 5;
+ int pagina=1;
+ int offset=0;
+ int num_paginas=0;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -47,15 +50,28 @@ public class Servlet extends HttpServlet {
             
              }  
           if ( op.equals("listar") ) {
+            listar(request, response);
+            /*List<Productos> listaProductos=Crud.getProductos();
+            // cálculos para la paginación
+
             
-            List<Productos> listaProductos=Crud.getProductos();
+            if ( request.getParameter("pagina")!=null){
+                pagina = Integer.parseInt(request.getParameter("pagina"));
+                offset = ( pagina-1 ) * NUM_LINEAS_PAGINA;
+            }
+            num_paginas = ( int ) Math.ceil(listaProductos.size() / ( double ) NUM_LINEAS_PAGINA);
+            listaProductos = Crud.getProductosPaginado(offset, NUM_LINEAS_PAGINA);
+            
             request.setAttribute("listado", listaProductos);
+            request.setAttribute("pagina", pagina);
+            request.setAttribute("num_paginas", String.valueOf(num_paginas));
+            
             request.setAttribute("mensaje", "");
-            request.getRequestDispatcher("listar.jsp").forward(request,response);
+            request.getRequestDispatcher("listar.jsp").forward(request,response);*/
             
              }
           
-          if ( op.equals("borrar") ) {
+         /* if ( op.equals("borrar") ) {
               int id=Integer.parseInt(request.getParameter("id")) ;
               if ( Crud.destroyProducto(id)>0) {
                   request.setAttribute("mensaje", "Producto con id" + id + "Borrado");
@@ -65,7 +81,7 @@ public class Servlet extends HttpServlet {
                List<Productos> listaProductos=Crud.getProductos();
                request.setAttribute("listado", listaProductos);
                request.getRequestDispatcher("listar.jsp").forward(request,response);             
-             }
+             } */
             /******************************************/
             /*    BORRAR                              */
             /******************************************/
@@ -76,9 +92,10 @@ public class Servlet extends HttpServlet {
               } else {
                   request.setAttribute("mensaje", "No se ha borrado ningún producto");
               }
-               List<Productos> listaProductos=Crud.getProductos();
-               request.setAttribute("listado", listaProductos);
-               request.getRequestDispatcher("listar.jsp").forward(request,response);             
+               //List<Productos> listaProductos=Crud.getProductos();
+               //request.setAttribute("listado", listaProductos);
+               //request.getRequestDispatcher("listar.jsp").forward(request,response);
+               this.listar(request, response);
              }
 
              /******************************************/
@@ -127,15 +144,40 @@ public class Servlet extends HttpServlet {
                 miProducto.setCategoria(categoria); 
               
               Crud.insertaProducto(miProducto);
-              List<Productos> listaProductos=Crud.getProductos();
+              /*List<Productos> listaProductos=Crud.getProductos();
               request.setAttribute("listado", listaProductos);
               request.setAttribute("mensaje", "");
-              request.getRequestDispatcher("listar.jsp").forward(request,response);            
+            request.setAttribute("pagina", pagina);
+            request.setAttribute("num_paginas", String.valueOf(num_paginas));
+              request.getRequestDispatcher("listar.jsp").forward(request,response);   */
+              this.listar(request, response);
               
              }
 
         
     }
+     protected void listar(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+                     
+            List<Productos> listaProductos=Crud.getProductos();
+            /* cálculos para la paginación */
+
+            
+            if ( request.getParameter("pagina")!=null){
+                pagina = Integer.parseInt(request.getParameter("pagina"));
+                offset = ( pagina-1 ) * NUM_LINEAS_PAGINA;
+            }
+            num_paginas = ( int ) Math.ceil(listaProductos.size() / ( double ) NUM_LINEAS_PAGINA);
+            listaProductos = Crud.getProductosPaginado(offset, NUM_LINEAS_PAGINA);
+            
+            request.setAttribute("listado", listaProductos);
+            request.setAttribute("pagina", pagina);
+            request.setAttribute("num_paginas", String.valueOf(num_paginas));
+            
+            request.setAttribute("mensaje", "");
+            request.getRequestDispatcher("listar.jsp").forward(request,response);
+         
+     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

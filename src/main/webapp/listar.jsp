@@ -22,7 +22,8 @@
         <%
             List<Productos> listaProductos = ( List<Productos> )request.getAttribute("listado");
             String mensaje = ( String ) request.getAttribute("mensaje");
-            
+            String num_paginasStr = ( String )  request.getAttribute("num_paginas");
+            int num_paginas = Integer.parseInt(num_paginasStr);
          %>
          
          <h2 class="alert alert-success"><%=mensaje%></h2>
@@ -37,6 +38,14 @@
          </tr>
          <%}%>
          </table>
+         <p>Mostrando página ${pagina} de ${num_paginas}</p>
+         <%
+             for ( int p=1;p<=num_paginas;p++ ) {
+          %>
+                 <a href="Servlet?op=listar&pagina=<%=p%>" ><%=p%></a> 
+           <%      
+             }
+             %>
     </div>
          <script>
              function Confirmation(){
