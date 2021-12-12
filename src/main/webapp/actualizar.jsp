@@ -21,13 +21,13 @@
            if ( mensaje!=null) out.println(mensaje);
          %>
         
-        <form action="Servlet">
+        <form action="Servlet" enctype="multipart/form-data">
             <input type="text" value="<%=operacion%>" name="op">
             <p>Id<input type="text" value="${producto.id}" name="id" readonly></p>
             <p>Nombre:<input  type="text" value="${producto.nombre}" name="nombre"></p>
             <p>Categoria<input  type="text" value="${producto.categoria}" name="categoria"></p>
             <p>Precio:<input type="text" value="${producto.precio}" name="precio"></p>
-            <p>Imagen:<input  type="text" value="${producto.imagen}" name="imagen"></p>
+            <p>Imagen:<input  type="file" value="${producto.imagen}" name="imagen"></p>
             
             <input type="submit" value="Actualizar Producto">
         </form>

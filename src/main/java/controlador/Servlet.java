@@ -134,6 +134,7 @@ final int NUM_LINEAS_PAGINA = 5;
             if ( op.equals("insertardatos") ) {               
               String nombre=request.getParameter("nombre");
               String categoria=request.getParameter("categoria");
+
               String imagen=request.getParameter("imagen");
               float precio = Float.parseFloat(request.getParameter("precio"));
               
@@ -217,5 +218,37 @@ final int NUM_LINEAS_PAGINA = 5;
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+String subirArchivo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+     path = request.getServletContext().getRealPath("").concat(File.separator).concat("ficheros");
+    Part filePart = request.getPart("imagen"); // Obtiene el archivo el input en el form se llama imagen
+    String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // MSIE fix.
+
+    //InputStream fileContent = filePart.getInputStream(); //Lo transforma en InputStream
+
+    //String path="/archivos/";
+    File uploads = new File(path); //Carpeta donde se guardan los archivos
+    uploads.mkdirs(); //Crea los directorios necesarios
+    File file = File.createTempFile("cod"+""+"-", "-"+fileName, uploads); //Evita que hayan dos archivos con el mismo nombre
+
+    try (InputStream input = filePart.getInputStream()){
+        Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    //return file.getPath();
+    return fileName;
+}
+
+    private String getFileName(Part part) {
+        String contentDisp = part.getHeader("content-disposition");
+        String[] tokens = contentDisp.split(";");
+        for (String token : tokens) {
+            if (token.trim().startsWith("filename")) {
+                return token.substring(token.indexOf("=") + 2, token.length()-1);
+            }
+        }
+        return "";
+    }
+
 
 }
