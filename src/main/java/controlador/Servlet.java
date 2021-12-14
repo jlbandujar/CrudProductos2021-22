@@ -5,13 +5,21 @@
  */
 package controlador;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import modelo.Crud;
 import modelo.Productos;
 
@@ -19,11 +27,20 @@ import modelo.Productos;
  *
  * @author DAW2
  */
+@MultipartConfig( fileSizeThreshold=1024*1024*10, 
+            maxFileSize=1024*1024*50, maxRequestSize=1024*1024*10)
 public class Servlet extends HttpServlet {
 final int NUM_LINEAS_PAGINA = 5;
  int pagina=1;
  int offset=0;
  int num_paginas=0;
+ String path = "";
+public void init(ServletConfig config){
+path = config.getServletContext().getRealPath("").
+                        concat(File.separator).concat("ficheros");
+
+}
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -106,6 +123,7 @@ final int NUM_LINEAS_PAGINA = 5;
                Productos miProducto = Crud.getProducto(id);
                request.setAttribute("operacion", "actualizardatos");
                request.setAttribute("producto", miProducto);
+               request.setAttribute("path", path);
                request.getRequestDispatcher("actualizar.jsp").forward(request,response);
             }
             /******************************************/
@@ -134,8 +152,9 @@ final int NUM_LINEAS_PAGINA = 5;
             if ( op.equals("insertardatos") ) {               
               String nombre=request.getParameter("nombre");
               String categoria=request.getParameter("categoria");
-
-              String imagen=request.getParameter("imagen");
+              
+              //String imagen=request.getParameter("imagen");
+              String imagen = this.subirArchivo(request, response);
               float precio = Float.parseFloat(request.getParameter("precio"));
               
                Productos miProducto = new Productos();
@@ -159,7 +178,7 @@ final int NUM_LINEAS_PAGINA = 5;
     }
      protected void listar(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-                     
+          // path = request.getServletContext().getRealPath("").concat(File.separator).concat("ficheros");     
             List<Productos> listaProductos=Crud.getProductos();
             /* cálculos para la paginación */
 
@@ -219,8 +238,8 @@ final int NUM_LINEAS_PAGINA = 5;
         return "Short description";
     }// </editor-fold>
 
-String subirArchivo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-     path = request.getServletContext().getRealPath("").concat(File.separator).concat("ficheros");
+public String  subirArchivo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    // path = request.getServletContext().getRealPath("").concat(File.separator).concat("ficheros");
     Part filePart = request.getPart("imagen"); // Obtiene el archivo el input en el form se llama imagen
     String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // MSIE fix.
 
@@ -236,7 +255,8 @@ String subirArchivo(HttpServletRequest request, HttpServletResponse response) th
     }
 
     //return file.getPath();
-    return fileName;
+    String archivo = file.getName();
+    return archivo;
 }
 
     private String getFileName(Part part) {

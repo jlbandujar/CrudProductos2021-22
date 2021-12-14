@@ -4,6 +4,7 @@
     Author     : DAW2
 --%>
 
+<%@page import="java.io.File"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -18,17 +19,18 @@
         <%
            String mensaje = ( String ) request.getAttribute("mensaje");
            String operacion = ( String ) request.getAttribute("operacion");
+           String path=( String )  request.getAttribute("path");
            if ( mensaje!=null) out.println(mensaje);
          %>
         
-        <form action="Servlet" enctype="multipart/form-data">
+        <form action="Servlet" method="POST" enctype="multipart/form-data">
             <input type="text" value="<%=operacion%>" name="op">
             <p>Id<input type="text" value="${producto.id}" name="id" readonly></p>
             <p>Nombre:<input  type="text" value="${producto.nombre}" name="nombre"></p>
             <p>Categoria<input  type="text" value="${producto.categoria}" name="categoria"></p>
             <p>Precio:<input type="text" value="${producto.precio}" name="precio"></p>
-            <p>Imagen:<input  type="file" value="${producto.imagen}" name="imagen"></p>
-            
+            <p>Imagen:${producto.imagen}<input  type="file" value="" name="imagen"></p>
+            <p><img src="<%=path%><%=File.separator%>${producto.imagen}" width="100" height="100"/></p>   
             <input type="submit" value="Actualizar Producto">
         </form>
     </body>

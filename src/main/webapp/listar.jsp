@@ -23,6 +23,7 @@
             List<Productos> listaProductos = ( List<Productos> )request.getAttribute("listado");
             String mensaje = ( String ) request.getAttribute("mensaje");
             String num_paginasStr = ( String )  request.getAttribute("num_paginas");
+
             int num_paginas = Integer.parseInt(num_paginasStr);
          %>
          
