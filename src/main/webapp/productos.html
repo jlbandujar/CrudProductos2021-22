@@ -8,40 +8,77 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            table,td { border:2px solid blue; border-collapse: collapse}
-            form { display:none}
-        </style>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
     </head>
     <body>
         <div>TODO write content</div>
         <button id="btnProductos">Cargar Productos</button>
         <button id="btnProducto">Carga Producto</button>
-        <button id="btnActualizaProducto">Actualiza Producto</button>
-        <button id="btnInsertaProducto">Inserta Producto</button>
+
+        
         <button id="btnBorraProducto">Borra Producto</button>
+        <button type="button" class="btn btn-primary" id="abreParaInsertar">
+            Nuevo Producto
+        </button>
         <input type="number" id="idProducto" value="1">
         <div id="formulario">
+
+            
+        </div>
+        <table id="tablaProductos" class="table">
+            
+        </table>
+        <div id="divProductos"></div>
+        
+        <!---*************** VENTANA MODAL ***************-->
+        <!-- The Modal -->
+<div class="modal" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Modal Heading</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
             <p>ID:<input type="text" name="id" id="id"></p>
             <p>Nombre:<input type="text" name="nombre" id="nombre"></p>
             <p>Categoria:<input type="text" name="categoria" id="categoria"></p>
             <p>Precio:<input type="text" name="precio" id="precio"></p> 
             <p>Imagen:<input type="text" name="imagen" id="imagen"></p>
-            
-        </div>
-        <table id="tablaProductos">
-            
-        </table>
-        <div id="divProductos"></div>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button id="btnInsertaProducto">Inserta Producto</button>
+        <button id="btnActualizaProducto" class="btn btn-primary" data-dismiss="modal">Actualiza Producto</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+        <!--- *************** FIN DE VENTANA MODAL **************-->
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> 
+        
         <script>
             document.getElementById("btnProductos").addEventListener('click',cargaProductos);
             document.getElementById("btnProducto").addEventListener('click',cargaProducto);
             document.getElementById("btnActualizaProducto").addEventListener('click',actualizaProducto);
              document.getElementById("btnInsertaProducto").addEventListener('click',insertaProducto);
              document.getElementById("btnBorraProducto").addEventListener('click',borraProducto);
+             document.getElementById("abreParaInsertar").addEventListener('click',abreParaInsertar);
 
-          
-            function cargaProductos(){
+           let btnInsertaProducto=document.getElementById("btnInsertaProducto");
+           let btnActualizaProducto=document.getElementById("btnActualizaProducto");
+           
+           function cargaProductos(){
            let tabla=document.getElementById("tablaProductos");
            fetch('http://localhost:8080/CrudProductos2021-22SUBIR/webresources/generic/productos/')
                 .then(response => response.json())
@@ -63,18 +100,28 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                      
                      let celdaCategoria=document.createElement("td");
                      celdaCategoria.textContent=json[i].categoria;
+                     /*** CELDA BORRAR ****/
                      let celdaBorrar=document.createElement("td");
                      let btnBorrar=document.createElement("button");
                      btnBorrar.setAttribute("onclick","borraProductoPorId("
                              +json[i].id+")");
                      btnBorrar.textContent="Borrar";
                      celdaBorrar.appendChild(btnBorrar);
-                
+                    /*** CELDA ACTUALIZAR ****/
+                     let celdaActualizar=document.createElement("td");
+                     let btnActualizar=document.createElement("button");
+                     btnActualizar.setAttribute("onclick","cargaProductoPorId("
+                             +json[i].id+")");
+                     btnActualizar.textContent="Actualizar";
+                     celdaActualizar.appendChild(btnActualizar);
+                    
                      fila.appendChild(celdaId);
                      fila.appendChild(celdaNombre);
                      fila.appendChild(celdaPrecio);
                      fila.appendChild(celdaCategoria);
                      fila.appendChild(celdaBorrar);
+                     fila.appendChild(celdaActualizar);
+                     
                      
                      tabla.appendChild(fila);
                      
@@ -85,6 +132,13 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
 
          function cargaProducto() {
              let idProducto=document.getElementById("idProducto").value;
+             cargaProductoPorId(idProducto);              
+         }
+         function cargaProductoPorId(idProducto){
+             $('#myModal').modal('show');
+
+             btnInsertaProducto.style.display="none";
+             btnActualizaProducto.style.display="inline";
              fetch('http://localhost:8080/CrudProductos2021-22SUBIR/webresources/generic/producto/'+idProducto )
                 .then(response => response.json())
                 .then(json => {
@@ -95,7 +149,14 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                     document.getElementById("categoria").value=json.categoria;
                     document.getElementById("precio").value=json.precio;
                     document.getElementById("imagen").value=json.imagen;
-                })
+                });
+         }
+         
+         function abreParaInsertar(){
+             $('#myModal').modal('show');
+
+             btnInsertaProducto.style.display="inline";
+             btnActualizaProducto.style.display="none";
          }
          function actualizaProducto(){
               fetch('http://localhost:8080/CrudProductos2021-22SUBIR/webresources/generic/producto/', {
@@ -143,7 +204,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
              fetch('http://localhost:8080/CrudProductos2021-22SUBIR/webresources/generic/producto/'+idProducto, {
                 method: 'DELETE',
               });
-
+              cargaProductos();
          }
         </script>
     </body>
