@@ -8,17 +8,77 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            table,td { border:2px solid blue; border-collapse: collapse}
+            form { display:none}
+        </style>
     </head>
     <body>
         <div>TODO write content</div>
-        <button id="btnProductos" onclick="cargaProductos()">Cargar Produtos</button>
-        <script>
+        <button id="btnProductos">Cargar Productos</button>
+        <button id="btnProducto">Carga Producto</button>
+        <input type="number" id="idProducto" value="1">
+        <div id="formulario">
+            <p>Nombre:<input type="text" name="nombre" id="nombre"></p>
+            <p>Categoria:<input type="text" name="categoria" id="categoria"></p>
+            <p>Precio:<input type="text" name="precio" id="precio"></p> 
+            <p>Imagen:<input type="text" name="imagen" id="imagen"></p>
             
-           function cargaProductos(){
+        </div>
+        <table id="tablaProductos">
+            
+        </table>
+        <div id="divProductos"></div>
+        <script>
+            document.getElementById("btnProductos").addEventListener('click',cargaProductos);
+            document.getElementById("btnProducto").addEventListener('click',cargaProducto);
+
+          
+            function cargaProductos(){
+           let tabla=document.getElementById("tablaProductos");
            fetch('http://localhost:8080/CrudProductos2021-22SUBIR/webresources/generic/productos/')
                 .then(response => response.json())
-                .then(json => console.log(json))
+                .then(json => {console.log(json);
+                //bucle para eliminar todas las filas de la tabla
+                while( tabla.firstChild){
+                    tabla.removeChild(tabla.firstChild);
+                }
+                //recorre todos los productos del array de productos
+                 for ( i=0;i<=json.length;i++){
+                     document.getElementById("divProductos").innerHTML+=json[i].nombre;
+                     let fila=document.createElement("tr");
+                     let celdaId=document.createElement("td");
+                     celdaId.textContent=json[i].id;
+                     let celdaNombre=document.createElement("td");
+                     celdaNombre.textContent=json[i].nombre;
+                     let celdaPrecio=document.createElement("td");
+                     celdaPrecio.textContent=json[i].precio;
+                     let celdaCategoria=document.createElement("td");
+                     celdaCategoria.textContent=json[i].categoria;
+                     fila.appendChild(celdaId);
+                     fila.appendChild(celdaNombre);
+                     fila.appendChild(celdaPrecio);
+                     fila.appendChild(celdaCategoria);
+                     tabla.appendChild(fila);
+                     
+                 }//fin de for
+              })
          } 
+
+         function cargaProducto() {
+             let idProducto=document.getElementById("idProducto").value;
+             fetch('http://localhost:8080/CrudProductos2021-22SUBIR/webresources/generic/producto/'+idProducto )
+                .then(response => response.json())
+                .then(json => {
+                    console.log(json);
+                    document.getElementById("formulario").style.display="block";
+                    document.getElementById("nombre").value=json.nombre;
+                    document.getElementById("categoria").value=json.categoria;
+                    document.getElementById("precio").value=json.precio;
+                    document.getElementById("imagen").value=json.imagen;
+                })
+         }
+         
         </script>
     </body>
 </html>
