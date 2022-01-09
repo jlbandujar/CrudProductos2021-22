@@ -30,7 +30,7 @@
             <p>Categoria<input  type="text" value="${producto.categoria}" name="categoria"></p>
             <p>Precio:<input type="text" value="${producto.precio}" name="precio"></p>
             <p>Imagen:${producto.imagen}<input  type="file" value="" name="imagen"></p>
-            <p><img src="<%=path%><%=File.separator%>${producto.imagen}" width="100" height="100"/></p>   
+            <p><img src="ficheros/${producto.imagen}" width="100" height="100"/></p>   
             <input type="submit" value="Actualizar Producto">
         </form>
     </body>

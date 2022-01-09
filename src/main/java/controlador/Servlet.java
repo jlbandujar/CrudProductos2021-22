@@ -259,7 +259,7 @@ public String  subirArchivo(HttpServletRequest request, HttpServletResponse resp
     return archivo;
 }
 
-    private String getFileName(Part part) {
+    /* private String getFileName(Part part) {
         String contentDisp = part.getHeader("content-disposition");
         String[] tokens = contentDisp.split(";");
         for (String token : tokens) {
@@ -268,7 +268,7 @@ public String  subirArchivo(HttpServletRequest request, HttpServletResponse resp
             }
         }
         return "";
-    }
+    } */
 
 
 }

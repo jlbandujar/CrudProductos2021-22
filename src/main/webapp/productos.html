@@ -78,9 +78,17 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
            let btnInsertaProducto=document.getElementById("btnInsertaProducto");
            let btnActualizaProducto=document.getElementById("btnActualizaProducto");
            
+           function getAbsolutePath() {
+                var loc = window.location;
+                var pathName = loc.pathname.substring(0, loc.pathname.lastIndexOf('/') + 1);
+                return loc.href.substring(0, loc.href.length - ((loc.pathname + loc.search + loc.hash).length - pathName.length));
+            }
+            
+            
            function cargaProductos(){
+           alert(getAbsolutePath());
            let tabla=document.getElementById("tablaProductos");
-           fetch('http://localhost:8080/CrudProductos2021-22SUBIR/webresources/generic/productos/')
+           fetch(getAbsolutePath()+'webresources/generic/productos/')
                 .then(response => response.json())
                 .then(json => {console.log(json);
                 //bucle para eliminar todas las filas de la tabla
@@ -89,7 +97,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                 }
                 //recorre todos los productos del array de productos
                 for ( i=0;i<=json.length;i++){
-                     document.getElementById("divProductos").innerHTML+=json[i].nombre;
+                     //document.getElementById("divProductos").innerHTML+=json[i].nombre;
                      let fila=document.createElement("tr");
                      let celdaId=document.createElement("td");
                      celdaId.textContent=json[i].id;
@@ -139,7 +147,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
 
              btnInsertaProducto.style.display="none";
              btnActualizaProducto.style.display="inline";
-             fetch('http://localhost:8080/CrudProductos2021-22SUBIR/webresources/generic/producto/'+idProducto )
+             fetch(getAbsolutePath()+'webresources/generic/producto/'+idProducto )
                 .then(response => response.json())
                 .then(json => {
                     console.log(json);
@@ -159,7 +167,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
              btnActualizaProducto.style.display="none";
          }
          function actualizaProducto(){
-              fetch('http://localhost:8080/CrudProductos2021-22SUBIR/webresources/generic/producto/', {
+              fetch(getAbsolutePath()+'webresources/generic/producto/', {
              method: 'PUT',
              body: JSON.stringify({
                id: document.getElementById("id").value,
@@ -178,7 +186,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
          }
          
          function insertaProducto(){
-              fetch('http://localhost:8080/CrudProductos2021-22SUBIR/webresources/generic/producto/', {
+              fetch(getAbsolutePath()+'webresources/generic/producto/', {
              method: 'POST',
              body: JSON.stringify({
                nombre: document.getElementById("nombre").value,
@@ -201,7 +209,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
              cargaProductos();
          }
          function borraProductoPorId(idProducto){
-             fetch('http://localhost:8080/CrudProductos2021-22SUBIR/webresources/generic/producto/'+idProducto, {
+             fetch('http://localhost:8080/CrudProductos2021-22/webresources/generic/producto/'+idProducto, {
                 method: 'DELETE',
               });
               cargaProductos();
